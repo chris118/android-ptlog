@@ -13,6 +13,5 @@ repositories {
 
 ```
 compile 'com.orhanobut:logger:2.1.1'
-compile 'org.greenrobot:greendao:3.2.2'
 compile(name:'ptlog', ext:'aar')
 ```

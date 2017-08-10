@@ -3,6 +3,7 @@ package com.putao.ptlog;
 import android.content.Context;
 import android.content.Intent;
 
+import com.facebook.stetho.Stetho;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 import com.putao.ptlog.viewer.PTLogActivity;
@@ -21,6 +22,7 @@ public final class PTLog {
 
     private static int mDisk_log_level = ERROR;
     private static Context mContext = null;
+    private static PTSqliteHelper mSqliteHelper;
 
     public static void init(Context context, int diskLogLevel){
         mContext = context;
@@ -29,8 +31,11 @@ public final class PTLog {
         // init Logger
         Logger.addLogAdapter(new AndroidLogAdapter());
 
-        // init GreenDAO
-        PTGreenDaoManager.getInstance().init(context);
+        //Stetho
+        Stetho.initializeWithDefaults(context);
+
+        //init sqlite helper
+        mSqliteHelper = new PTSqliteHelper(context);
     }
 
     public static void d(String message, Object... args) {
@@ -64,7 +69,7 @@ public final class PTLog {
             if( args != null && args.length != 0 ) {
                 formatMessage = String.format(message, args);
             }
-            PTGreenDaoManager.getInstance().insertLog(priority, formatMessage);
+            mSqliteHelper.insertLog(priority, formatMessage);
         }
     }
 
@@ -74,13 +79,8 @@ public final class PTLog {
         mContext.startActivity(intent);
     }
 
-    public static List<PTLogBean> queryLog(int priorty){
-        List<PTLogBean> logList = PTGreenDaoManager.getInstance().queryLog(priorty);
-        return logList;
-    }
-
     public static List<PTLogBean> queryLog(int priority, Date begin, Date end, int limit){
-        List<PTLogBean> logList = PTGreenDaoManager.getInstance().queryLog(priority, begin, end, limit);
+        List<PTLogBean> logList = mSqliteHelper.queryLog(priority, begin, end, limit);
         return logList;
     }
 }
