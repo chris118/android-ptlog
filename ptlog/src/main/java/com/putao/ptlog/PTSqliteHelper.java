@@ -27,8 +27,18 @@ public class PTSqliteHelper extends SQLiteOpenHelper {
 
     private static final int DB_VERSION = 1;
 
-    public PTSqliteHelper(Context context) {
+    private PTSqliteHelper(Context context) {
         super(context,DB_NAME,null,DB_VERSION);
+    }
+
+    private static PTSqliteHelper instance;
+
+    public static synchronized PTSqliteHelper getInstance(Context context)
+    {
+        if (instance == null)
+            instance = new PTSqliteHelper(context);
+
+        return instance;
     }
 
     @Override
@@ -73,11 +83,6 @@ public class PTSqliteHelper extends SQLiteOpenHelper {
         catch (SQLException ex) {
             return;
         }
-        finally {
-            if (db != null) {
-                db.close();
-            }
-        }
     }
 
     public List<PTLogBean> queryLog(int priority, Date begin, Date end, int limit){
@@ -109,11 +114,6 @@ public class PTSqliteHelper extends SQLiteOpenHelper {
         }
         catch (SQLException ex) {
             return logList;
-        }
-        finally {
-            if (db != null) {
-                db.close();
-            }
         }
 
         // reverse

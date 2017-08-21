@@ -3,7 +3,7 @@ package com.putao.ptlog;
 import android.content.Context;
 import android.content.Intent;
 
-import com.facebook.stetho.Stetho;
+//import com.facebook.stetho.Stetho;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 import com.putao.ptlog.viewer.PTLogActivity;
@@ -32,10 +32,10 @@ public final class PTLog {
         Logger.addLogAdapter(new AndroidLogAdapter());
 
         //Stetho
-        Stetho.initializeWithDefaults(context);
+        //Stetho.initializeWithDefaults(context);
 
         //init sqlite helper
-        mSqliteHelper = new PTSqliteHelper(context);
+        mSqliteHelper = PTSqliteHelper.getInstance(context);
     }
 
     public static void d(String message, Object... args) {

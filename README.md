@@ -1,17 +1,19 @@
-##### 1. 拷贝ptlog.aar到libs目录
-
-##### 2. build.gradle文件加入
+##### 1. 根目录build.gradle添加
 
 ```
-repositories {
-    flatDir {
-    dirs 'libs'
+allprojects {
+    repositories {
+        jcenter()
+        maven { url 'http://maven.putao.io/nexus/content/repositories/putao/' }
+        maven { url 'http://maven.putao.io/nexus/content/repositories/PutaoCentral/' }
+    }
 }
-```
-
-##### 3. 添加依赖：
 
 ```
-compile 'com.orhanobut:logger:2.1.1'
-compile(name:'ptlog', ext:'aar')
+
+##### 2. 工程build.gradle中添加依赖：
+
+```
+compile 'com.putao.mobile:ptlog:1.0.0'
+
 ```
