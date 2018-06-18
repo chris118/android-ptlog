@@ -5,7 +5,9 @@ import android.content.Intent;
 
 //import com.facebook.stetho.Stetho;
 import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.FormatStrategy;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.PrettyFormatStrategy;
 import com.putao.ptlog.viewer.PTLogActivity;
 
 import java.util.Date;
@@ -24,18 +26,27 @@ public final class PTLog {
     private static Context mContext = null;
     private static PTSqliteHelper mSqliteHelper;
 
-    public static void init(Context context, int diskLogLevel){
+    public static void init(Context context, int diskLogLevel, int savedDay){
         mContext = context;
         mDisk_log_level = diskLogLevel;
 
         // init Logger
-        Logger.addLogAdapter(new AndroidLogAdapter());
+        FormatStrategy formatStrategy = PrettyFormatStrategy.newBuilder()
+                .showThreadInfo(false)  // (Optional) Whether to show thread info or not. Default true
+                .methodCount(0)         // (Optional) How many method line to show. Default 2
+                .methodOffset(7)        // (Optional) Hides internal method calls up to offset. Default 5
+                .tag("android-client")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
+                .build();
+        Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy));
 
         //Stetho
         //Stetho.initializeWithDefaults(context);
 
         //init sqlite helper
         mSqliteHelper = PTSqliteHelper.getInstance(context);
+
+        //remove the history log
+        mSqliteHelper.deleteLogWithDay(savedDay);
     }
 
     public static void d(String message, Object... args) {
@@ -73,14 +84,14 @@ public final class PTLog {
         }
     }
 
+    public static List<PTLogBean> queryLog(int priority, Date begin, Date end, int limit){
+        List<PTLogBean> logList = mSqliteHelper.queryLog(priority, begin, end, limit);
+        return logList;
+    }
+
     public static void showViewer(){
         Intent intent = new Intent(mContext, PTLogActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
-    }
-
-    public static List<PTLogBean> queryLog(int priority, Date begin, Date end, int limit){
-        List<PTLogBean> logList = mSqliteHelper.queryLog(priority, begin, end, limit);
-        return logList;
     }
 }

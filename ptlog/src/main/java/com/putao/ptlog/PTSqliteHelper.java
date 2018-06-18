@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -120,5 +121,19 @@ public class PTSqliteHelper extends SQLiteOpenHelper {
         List<?> shallowCopy = logList.subList(0, logList.size());
         Collections.reverse(shallowCopy);
         return logList;
+    }
+
+    public void deleteLogWithDay(int day){
+        Date now = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+//        calendar.add(Calendar.MINUTE, (-1)*10);
+        calendar.add(Calendar.DATE, (-1)*day);
+        Date yesterday = calendar.getTime();
+        String timestamp = String.valueOf(yesterday.getTime());
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_NAME, "date<?", new String[]{timestamp});
+
     }
 }

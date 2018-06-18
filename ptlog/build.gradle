@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 android {
     compileSdkVersion 25
@@ -34,4 +36,11 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-apply from: 'bintray.gradle'
+signing {
+    required { hasProperty("release") && gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+uploadArchives {
+
+}
